@@ -155,10 +155,10 @@ void loop() {
 
         if (s == "GPS") {
 
-          String s = String(gps.GPS.latitudeDegrees, 2);
-          // + String(gps.GPS.lat) + ", " 
-          // + String(gps.GPS.longitudeDegrees, 4) 
-          // + String(gps.GPS.lon); 
+          String s = String(gps.GPS.latitudeDegrees, 4)
+          + String(gps.GPS.lat) + ", " 
+          + String(gps.GPS.longitudeDegrees, 4) 
+          + String(gps.GPS.lon); 
 
           iridium.sendSBDtext(s);
 

@@ -33,6 +33,8 @@ class IridiumController {
     int handleResponse();
     int handleSend();
     int handleInterupt();
+    int handleR();
+
 
     bool isEndResponse(String response);
 

@@ -101,6 +101,73 @@ bool IridiumController::setCommandState(bool active, String command, String endR
 	}
 }
 
+int IridiumController::handleR() {
+	// 0 = Success, 1 = Not finished, 2 = Error
+
+	String packet = readPacket();
+	if (packet.length() == 0) return 1; 
+
+	// Handle RING alert
+	if (packet.startsWith("SBDRING")) {
+		//The FA should append an ‘A’ to the command, i.e. +SBDIXA, when the SBD session is in response to an SBD ring alert. (ref. docs)
+		pushCommand("AT+SBDIXA", "OK", [](IridiumController *crl){ 
+			if (crl->status.MT_status == 1) {
+				crl->pushCommand("AT+SBDRT", "OK");
+			}
+		});  
+
+	}
+
+	// Handle Event +XXXX:
+	if (packet.startsWith("+")) {
+		int st[6];
+		int n = eventParser(packet, st);
+
+		if (packet.startsWith("+SBDIX")) {
+			status.update(st);
+		} 
+		else if (packet.startsWith("+CSQ")) {
+			status.SignalQuality = st[0];
+		} 
+		else if (packet.startsWith("+SBDREG")) {
+			status.REG = st[0];
+		}
+		else if (packet.startsWith("+CIEV")) {
+			if (st[0] == 0) {
+				status.SignalQuality = st[1];
+			}
+		} 
+	}
+
+	//Callback on pushCommand
+	if (callbck.command == activeCommand) {
+		if (isEndResponse(packet)) {
+			callbck.responseCallback(this);
+			callbck.clear();
+		}
+	}
+	
+	//Callback on received data
+	if (activeCommand.startsWith("AT+SBDRT")) {
+		if (!packet.startsWith("AT+SBDRT") && !packet.startsWith("+SBDRT:") && !packet.startsWith("OK")) {
+			receivedSBDCallback(packet);
+		}
+	}
+
+	//Generall response callback
+	responseCallback(activeCommand, packet);
+	
+	//Checks for and of activity
+	if (isEndResponse(packet)) {
+		setCommandState(false);
+		if (packet.startsWith("ERROR")) return 2;
+		return 0;
+	}
+
+
+
+}
+
 int IridiumController::handleInterupt() {
 	String packet = readPacket();
 	if (packet.length() == 0) return 2;
@@ -125,34 +192,6 @@ int IridiumController::handleInterupt() {
 
 	Serial.println("Interupt: " + packet);
 	return 0;
-}
-
-int IridiumController::handleSend() {
-	if (sendQueue.count() >= 2) {
-		command(sendQueue.pop(), sendQueue.pop());
-	}
- 
-	if (sendQueue.count() == 0) {
-		//pass
-	}
-	return 0;
-
-}
-
-bool IridiumController::isEndResponse(String response) {
-	if (response.startsWith("ERROR")) {
-		return true;
-	}
-
-	if (activeEndResponse.equals(NUM) && response[0] >= '0' && response[0] <= '9') {
-		return true;
-	}
-	
-	if (response.startsWith(activeEndResponse)) {
-		return true;
-	}
-
-	return false;
 }
 
 int IridiumController::handleResponse() {
@@ -206,6 +245,37 @@ int IridiumController::handleResponse() {
 	return 1;
 
 }
+
+
+int IridiumController::handleSend() {
+	if (sendQueue.count() >= 2) {
+		command(sendQueue.pop(), sendQueue.pop());
+	}
+ 
+	if (sendQueue.count() == 0) {
+		//pass
+	}
+	return 0;
+
+}
+
+bool IridiumController::isEndResponse(String response) {
+	if (response.startsWith("ERROR")) {
+		return true;
+	}
+
+	if (activeEndResponse.equals(NUM) && response[0] >= '0' && response[0] <= '9') {
+		return true;
+	}
+	
+	if (response.startsWith(activeEndResponse)) {
+		return true;
+	}
+
+	return false;
+}
+
+
 
 
 String IridiumController::checksum(String msg) {
@@ -299,8 +369,10 @@ bool IridiumController::command(String message, String response) {
 int IridiumController::eventParser(String msg, int out[]) {
     int index = 0;
     String s = "";
-
-    for (int j = msg.indexOf(':'); j < msg.length(); j++) {
+	int j = msg.indexOf(':');
+	if (j == -1) return -1;
+	
+    for (; j < msg.length(); j++) {
     
       while (msg[j] >= '0' && msg[j] <= '9') {
         s += msg[j++];
