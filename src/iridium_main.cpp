@@ -65,15 +65,7 @@ void receiveSBDcallback(String message) {
 }
 
 void callback(String command, String response) {
-  if (response.startsWith("+SBDI")) {
-    int status[6];
-    int n = iridium.eventParser(response, status);
-    if (status[5] != 0) {
-      
-    }
-  }
-
-  Serial.println("Response is: " + response);
+   Serial.println("Response is: " + response);
 }
 
 void setup() {

@@ -1,5 +1,5 @@
 #include "E_BLE_C.h"
-#include "../UUIDs.h"
+#include <UUIDs.h>
 
 
 
