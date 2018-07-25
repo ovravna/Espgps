@@ -54,16 +54,17 @@ void IridiumController::handle() {
 	// }
 
 
-	while (Iridium.available() && !isActive()) {
-		handleInterupt();
-	}
+	// while (Iridium.available() && !isActive()) {
+	// 	handleInterupt();
+	// }
 
 
 	
-    while (Iridium.available() && isActive()) {
+    while (Iridium.available()) {
 		int n = handleResponse();
 		if (n == 2) // ERROR
 		{
+			Serial.println("#errorhandling...");
 			//TODO error handeling. It may be an idea to clear the sendQueue, however that may/will cause later commands/sessions to be deleted (NOT GOOD). Maybe its possible to design a session-state and only clear this session? 
 			// However, I'm not actually sure it is needed at all, it seems like the 9603 is ignoring commands that are not valid.
 
@@ -101,7 +102,7 @@ bool IridiumController::setCommandState(bool active, String command, String endR
 	}
 }
 
-int IridiumController::handleR() {
+int IridiumController::handleResponse() {
 	// 0 = Success, 1 = Not finished, 2 = Error
 
 	String packet = readPacket();
@@ -123,28 +124,32 @@ int IridiumController::handleR() {
 		int st[6];
 		int n = eventParser(packet, st);
 
-		if (packet.startsWith("+SBDIX")) {
-			status.update(st);
-		} 
-		else if (packet.startsWith("+CSQ")) {
-			status.SignalQuality = st[0];
-		} 
-		else if (packet.startsWith("+SBDREG")) {
-			status.REG = st[0];
-		}
-		else if (packet.startsWith("+CIEV")) {
-			if (st[0] == 0) {
-				status.SignalQuality = st[1];
+		if (n != -1) {
+			if (packet.startsWith("+SBDIX")) {
+				status.update(st);
+			} 
+			else if (packet.startsWith("+CSQ")) {
+				status.SignalQuality = st[0];
+			} 
+			else if (packet.startsWith("+SBDREG")) {
+				status.REG = st[0];
 			}
+			else if (packet.startsWith("+CIEV")) {
+				if (st[0] == 0) {
+					status.SignalQuality = st[1];
+				}
+			} 
 		} 
+
+		
 	}
 
+	if (!isActive()) return 1; //TODO, find out what the problem is...
+
 	//Callback on pushCommand
-	if (callbck.command == activeCommand) {
-		if (isEndResponse(packet)) {
-			callbck.responseCallback(this);
-			callbck.clear();
-		}
+	if (callbck.command == activeCommand && isEndResponse(packet)) {
+		callbck.responseCallback(this);
+		callbck.clear();
 	}
 	
 	//Callback on received data
@@ -165,7 +170,7 @@ int IridiumController::handleR() {
 	}
 
 
-
+	return 1; 
 }
 
 int IridiumController::handleInterupt() {
@@ -194,7 +199,7 @@ int IridiumController::handleInterupt() {
 	return 0;
 }
 
-int IridiumController::handleResponse() {
+int IridiumController::handleR() {
 	// 0 = Success, 1 = Not finished, 2 = Error
 
 	String packet = readPacket();
@@ -308,13 +313,13 @@ bool IridiumController::pushCommand(String message, String response, void (*resp
 
 
 void IridiumController::sendSBDtext(String message) {
-	String len = String(message.length());
-	String cs = checksum(message);
+	// String len = String(message.length());
+	// String cs = checksum(message);
 
-	pushCommand("AT+SBDWB=" + len, "READY");
-	pushCommand(message + cs, "OK");
+	// pushCommand("AT+SBDWB=" + len, "READY");
+	// pushCommand(message + cs, "OK");
 
-	// pushCommand("AT+SBDWT="+message, "OK"); 
+	pushCommand("AT+SBDWT="+message, "OK"); 
 
 	pushCommand("AT+SBDIX", "OK", [](IridiumController *crl) {
 		if (crl->status.MT_queued == 0) {
@@ -371,7 +376,7 @@ int IridiumController::eventParser(String msg, int out[]) {
     String s = "";
 	int j = msg.indexOf(':');
 	if (j == -1) return -1;
-	
+
     for (; j < msg.length(); j++) {
     
       while (msg[j] >= '0' && msg[j] <= '9') {
