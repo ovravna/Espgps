@@ -1,6 +1,6 @@
 #include "E_BLE_S.h"
 #include <UUIDs.h>
-
+#include <BLE2902.h>
 
 
 void ConnectionCallback::onConnect(BLEServer *pServer) {
@@ -49,13 +49,16 @@ bool E_BLE_S::begin() {
 
     pService = pServer->createService(SERVICE_UUID);
 
-    characteristics[CHARACTERISTIC_UUID] = pService->createCharacteristic(
-            CHARACTERISTIC_UUID,
-            BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_WRITE
-    );
-    characteristics[CHARACTERISTIC_UUID]->setCallbacks(new CharacteristicCallback(CHARACTERISTIC_UUID));
-    characteristics[CHARACTERISTIC_UUID]->setValue("Hello World");
+    // characteristics[CHARACTERISTIC_UUID] = pService->createCharacteristic(
+    //         CHARACTERISTIC_UUID,
+    //         BLECharacteristic::PROPERTY_READ |
+    //         BLECharacteristic::PROPERTY_WRITE
+    // );
+    // characteristics[CHARACTERISTIC_UUID]->setCallbacks(new CharacteristicCallback(CHARACTERISTIC_UUID));
+    // characteristics[CHARACTERISTIC_UUID]->setValue("Hello World");
+    BLEDescriptor textDescriptor(BLEUUID((uint16_t)0x2901));
+
+    textDescriptor.setValue("Power!");
 
 
     characteristics[POWER_CHAR_UUID] = pService->createCharacteristic(
@@ -63,21 +66,21 @@ bool E_BLE_S::begin() {
             BLECharacteristic::PROPERTY_NOTIFY
     );
 
+    characteristics[POWER_CHAR_UUID]->addDescriptor(&textDescriptor);
+    characteristics[POWER_CHAR_UUID]->addDescriptor(new BLE2902());
     characteristics[POWER_CHAR_UUID]->setValue("OK");
 
-    characteristics[COORDINATES_CHAR_UUID] = pService->createCharacteristic(
-            COORDINATES_CHAR_UUID,
-            BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_NOTIFY
-    );
+    // characteristics[COORDINATES_CHAR_UUID] = pService->createCharacteristic(
+    //         COORDINATES_CHAR_UUID,k
+    //         BLECharacteristic::PROPERTY_READ
+    // );
 
-    characteristics[COORDINATES_CHAR_UUID]->setValue("N/A");
+    // characteristics[COORDINATES_CHAR_UUID]->setValue("N/A");
 
-    characteristics[CONNECTION_CHAR_UUID] = pService->createCharacteristic(
-            CONNECTION_CHAR_UUID,
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_WRITE
-    );
+    // characteristics[CONNECTION_CHAR_UUID] = pService->createCharacteristic(
+    //         CONNECTION_CHAR_UUID,
+    //         BLECharacteristic::PROPERTY_WRITE
+    // );
 
 
     pService->start();
@@ -98,6 +101,7 @@ bool E_BLE_S::handle() {
     // }
 
     characteristics[POWER_CHAR_UUID]->notify();
+    Serial.println("Notify...");
 
     return true;
 }

@@ -6,6 +6,18 @@
 
 void AdvertisedCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
 
+    if (DEBUG) {
+        Serial.print("Addr: ");
+        Serial.print(advertisedDevice.getAddress().toString().c_str());
+        if (advertisedDevice.haveName()) {
+            Serial.print("| Name: " + String(advertisedDevice.getName().c_str()));
+
+        }
+        Serial.println();        
+
+
+    }
+
     if (advertisedDevice.haveName() && advertisedDevice.getName() == "ESP32_SERVER") {
 
         advertisedDevice.getScan()->stop();
@@ -26,6 +38,8 @@ bool E_BLE_C::connect(BLEAddress serverAddress) {
 
     }
 
+    init();
+
     if (DEBUG) Serial.println("Start connecting...");
 
     pClient->connect(serverAddress);
@@ -39,7 +53,7 @@ bool E_BLE_C::connect(BLEAddress serverAddress) {
     } 
 
     if (pRemoteService == nullptr) {
-        //TODO: something...
+        //Handle "Not able to connect to service"-error, probably not needed
         if (DEBUG) Serial.println("Not connected to service :(");
     } else {
 
@@ -53,12 +67,17 @@ bool E_BLE_C::connect(BLEAddress serverAddress) {
 
 
 bool E_BLE_C::addCharacteristic(const char *uuid) {
+    if (DEBUG) Serial.println("Try to connect to characteritic");
     BLERemoteCharacteristic * remoteChar = pRemoteService->getCharacteristic(uuid);
 
     if (remoteChar == nullptr) {
         if (DEBUG) Serial.print("Could not find characteristic. UUID: ");
         return false;
     }
+
+    // const uint8_t indicationOn[] = {0x2, 0x0};
+    // remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)indicationOn, 2, true);
+
     characteristics[uuid] = remoteChar;
 
     if (DEBUG) {
@@ -68,6 +87,17 @@ bool E_BLE_C::addCharacteristic(const char *uuid) {
 
     if (remoteChar->canNotify()) {
         remoteChar->registerForNotify(notifyCallback);
+        if (DEBUG) Serial.println("Notifies");   
+
+        const uint8_t notificationOff[] = {0x0, 0x0};
+        const uint8_t notificationOn[] = {0x1, 0x0};
+        const uint8_t indicationOn[] = {0x2, 0x0};
+
+        // remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)indicationOn, 2, true);
+        // remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)notificationOn, 2, true);
+
+    } else {
+        if (DEBUG) Serial.println("Cant notify");
     }
 
 
@@ -80,30 +110,23 @@ bool E_BLE_C::validConnection = false;
 void E_BLE_C::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic,
                                 uint8_t *pData, size_t length, bool isNotify) {
 
-    char d[length];
-    for (int j = 0; j < length; ++j) {
-        d[j] = pData[j];
-    }
+    // char d[length];
+    // for (int j = 0; j < length; ++j) {
+    //     d[j] = pData[j];
+    // }
 
 
     //    Serial.write(pData, length);
+    Serial.println("KAKE!");
+    String s = String((char*) pData);
+    Serial.println(s);
 
-    Serial.write("Data: ");
-    Serial.write(pData, length);
-    Serial.println();
-//     Serial.write(" | Length: ");
-//     Serial.print(length);
-//     Serial.write(" | ");
-
-// //    sdata[sindex] = String(d);
-
-//     if (String(d).startsWith("OK")) {
-//         validConnection = true;
-//         Serial.write("+");
-//     } else {
-//         Serial.write("-");
-//     }
-//     Serial.write('\n');
+    
+    if (DEBUG) {
+        Serial.print("Data: ");
+        Serial.print(s.substring(0, length));
+        Serial.println();
+    }
 
 }
 
@@ -111,9 +134,9 @@ void tryConnect(E_BLE_C *client, BLEAddress *serverAddress) {
 
     if (client->connect(*serverAddress)) {
 
-        client->addCharacteristic(CHARACTERISTIC_UUID);
         client->addCharacteristic(POWER_CHAR_UUID);
-        client->addCharacteristic(CONNECTION_CHAR_UUID);
+        // client->addCharacteristic(CHARACTERISTIC_UUID);
+        // client->addCharacteristic(CONNECTION_CHAR_UUID);
     }
 }
 
@@ -122,7 +145,7 @@ void E_BLE_C::init() {
 
     BLEClient *client = BLEDevice::createClient();
 
-    Serial.println("Client created...");
+    if (DEBUG) Serial.println("Client created...");
 
     pClient = client;
 
@@ -155,14 +178,16 @@ bool E_BLE_C::handle() {
 
     // delay(2000);
 
-    if (!validConnection) {
+    // if (!validConnection) {
 
-        Serial.println("\n\nSHUT DOWN!!!\n");
-        doConnect = true;
+    //     if (DEBUG) Serial.println("\n\nSHUT DOWN!!!\n");
+    //     doConnect = true;
 
-        delay(10);
-    }
-    delay(10);
+    //     delay(10);
+    // }
+
+
+    // delay(10);
     return true;
 }
 

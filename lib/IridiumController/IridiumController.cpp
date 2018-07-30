@@ -1,9 +1,5 @@
 #include "IridiumController.h"
 
-void IridiumController::test() {
-	Serial.println("TEST TEST TEST!");
-	Serial.println("TEST TEST TEST!");
-}
 
 bool IridiumController::begin() {
     Iridium.begin(BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
@@ -354,7 +350,7 @@ void IridiumController::setSBDCallcack(void (*sbdCallback)(String message)) {
 
 void IridiumController::write(String message) {
 	Iridium.write(&message[0]);
-	Serial.println("Sending: "+message);
+	if (DEBUG) Serial.println("Sending: "+message);
 
 	end();
 }
