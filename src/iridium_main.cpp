@@ -3,8 +3,6 @@
 #include <E_GPS.h>
 #include "utils.h"
 
-
-#define TEST_LED 14
 #include <Switch.h>
 
 
@@ -66,8 +64,6 @@ void receiveSBDcallback(String message) {
 
   if (DEBUG) Serial.println("SBD received: " + message);
 
-
-
 }
 
 void callback(String command, String response) {
@@ -84,8 +80,8 @@ void setup() {
 	if (DEBUG) Serial.println("Started!");
 
   //Set callbacks
-  iridium.setResponseCallcack(callback);
-  iridium.setSBDCallcack(receiveSBDcallback);
+  iridium.setResponseCallback(callback);
+  iridium.setSBDCallback(receiveSBDcallback);
 
   //begin
   iridium.begin();

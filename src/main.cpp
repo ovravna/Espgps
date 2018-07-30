@@ -6,14 +6,7 @@
 #include <Print.h>
 #include <UUIDs.h>
 #include "utils.h"
-
-
-// HardwareSerial IridiumSerial(1);
-// HardwareSerial GPSSerial(2);
-
-// E_GPS gps(&GPSSerial, 25, 26);
-
-// E_BLE_C C;
+#include <Switch.h>
 
 #ifdef SERVER
 E_BLE_S ble;
@@ -21,20 +14,107 @@ E_BLE_S ble;
 E_BLE_C ble;
 #endif
 
-// E_Iridium I(&GPSSerial, 32, 33);
 
 
-// IridiumController iridium(IridiumSerial, 32, 33, 35);
-void callback(String command, String response) {
-   if (DEBUG) Serial.println("Response is: " + response);
+
+
+
+#ifdef IRIDIUM_DEVICE
+HardwareSerial iridiumSerial(1);
+
+IridiumController iridium(iridiumSerial, 32, 33, 35);
+Switch sunamiController;
+#endif
+
+
+#ifdef GPS_DEVICE
+HardwareSerial gpsSerial(2);
+
+E_GPS gps(&gpsSerial, 25, 26);
+#endif
+
+
+#ifdef IRIDIUM_DEVICE
+
+void receiveSBDcallback(String message) {
+
+  
+  //state 0
+  if (message.startsWith("s0")) {
+    //turn off led
+    //sendSBDtext( state of led now )
+    bool state = sunamiController.turnOff();
+
+    
+    iridium.sendSBDtext(String(state));
+  }
+
+  //state 1
+  if (message.startsWith("s1")) {
+    //turn on led
+    //sendSBDtext( state of led now )
+
+
+    bool state = sunamiController.turnOff();
+    iridium.sendSBDtext(String(state));
+  }
+
+  //Query state
+  if (message.startsWith("qs")) {
+    //sendSBDtext( state of led now )    
+    iridium.sendSBDtext(String(sunamiController.getState()));
+
+  }
+
+
+#ifdef GPS_DEVICE
+  //Query location
+  if (message.startsWith("ql")) {
+    
+    String s = String(gps.GPS.latitudeDegrees, 4)
+          + String(gps.GPS.lat) + ", " 
+          + String(gps.GPS.longitudeDegrees, 4) 
+          + String(gps.GPS.lon); 
+
+    iridium.sendSBDtext(s);
+  }
+
+  //Query coordinates
+  if (message.startsWith("qc")) {
+
+    char* s = IridiumController::bytify(gps.GPS.latitude_fixed, gps.GPS.longitude_fixed);
+    iridium.sendSBDtext(s);
+    
+  }
+#endif
+
+
+  if (DEBUG) Serial.println("SBD received: " + message);
+
 }
+
+void callback(String command, String response) {
+  if (DEBUG) Serial.println("Response is: " + response);
+}
+#endif
+
 
 void setup() {
 
   Serial.begin(19200);
   if (DEBUG) Serial.println("Serial started...");
 
-  // iridium.setResponseCallcack(callback);
+  #ifdef IRIDIUM_DEVICE
+  iridium.setResponseCallback(callback);
+  iridium.setSBDCallback(receiveSBDcallback);
+  iridium.begin();
+  #endif
+
+  #ifdef GPS_DEVICE
+  gps.begin();
+  #endif
+
+  // iridium.setResponseCallback(callback);
 
 
   // gps.begin();
@@ -43,47 +123,30 @@ void setup() {
   
 }
 
-uint32_t timer = millis();
+unsigned long t2;
+unsigned long t;
+unsigned long pdiff;
+
+void synchronize(unsigned long period = 1000) {
+
+	pdiff = (millis() - t);
+	if (pdiff < period) delay(period - pdiff);
+	t = millis();
+}
      
 void loop() {
-  // iridium.handle();
-  // gps.handle();
+  #ifdef IRIDIUM_DEVICE
+  iridium.handle();
+  #endif
+
+  #ifdef GPS_DEVICE
+  gps.handle();
+  #endif
 
   // ble.setCharacteristic()
   
-    ble.handle();
+  ble.handle();
 
   
-  
-  // if (Serial.available())
-  //   GPSSerial.write(Serial.read());
-  // if (GPSSerial.available())
-  //   Serial.write(GPSSerial.read());
-  
-
-  
-
-  // // G.handle();
-
-
-  if (timer > millis()) timer = millis();
-        
-  //   // approximately every 2 seconds or so, print out the current stats
-
-
-
-  if (millis() - timer > 500) {
-
-    timer = millis(); // reset the timer
-  }
-
-      
-    
-  //     S.setCharacteristic(COORDINATES_CHAR_UUID, 
-  //         std::string(Coordinate { G.GPS.latitude_fixed, G.GPS.longitude_fixed }.b));
-
-  //     S.handle();
-
-
-  
-}
+  synchronize(500);
+} 

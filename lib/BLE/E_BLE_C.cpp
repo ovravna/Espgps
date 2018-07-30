@@ -1,5 +1,6 @@
 #include "E_BLE_C.h"
 #include <UUIDs.h>
+#include <Log.h>
 
 
 
@@ -87,18 +88,8 @@ bool E_BLE_C::addCharacteristic(const char *uuid) {
 
     if (remoteChar->canNotify()) {
         remoteChar->registerForNotify(notifyCallback);
-        if (DEBUG) Serial.println("Notifies");   
 
-        const uint8_t notificationOff[] = {0x0, 0x0};
-        const uint8_t notificationOn[] = {0x1, 0x0};
-        const uint8_t indicationOn[] = {0x2, 0x0};
-
-        // remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)indicationOn, 2, true);
-        // remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)notificationOn, 2, true);
-
-    } else {
-        if (DEBUG) Serial.println("Cant notify");
-    }
+    } 
 
 
 
@@ -191,3 +182,11 @@ bool E_BLE_C::handle() {
     return true;
 }
 
+
+
+// const uint8_t notificationOff[] = {0x0, 0x0};
+// const uint8_t notificationOn[] = {0x1, 0x0};
+// const uint8_t indicationOn[] = {0x2, 0x0};
+
+// remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)indicationOn, 2, true);
+// remoteChar->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)notificationOn, 2, true);

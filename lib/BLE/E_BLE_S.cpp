@@ -101,7 +101,6 @@ bool E_BLE_S::handle() {
     // }
 
     characteristics[POWER_CHAR_UUID]->notify();
-    Serial.println("Notify...");
 
     return true;
 }

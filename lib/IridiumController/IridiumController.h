@@ -88,8 +88,8 @@ public:
 
     void test();
 
-    void setResponseCallcack(void (*respCallback)(String command, String response));
-    void setSBDCallcack(void (*sbdCallback)(String message));
+    void setResponseCallback(void (*respCallback)(String command, String response));
+    void setSBDCallback(void (*sbdCallback)(String message));
 
     void sendSBDtext(String message);
 

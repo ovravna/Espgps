@@ -340,11 +340,11 @@ void IridiumController::end() {
 	    Iridium.write('\n');
 }
 
-void IridiumController::setResponseCallcack(void (*respCallback)(String command, String response)){
+void IridiumController::setResponseCallback(void (*respCallback)(String command, String response)){
 	responseCallback = respCallback;
 }
 
-void IridiumController::setSBDCallcack(void (*sbdCallback)(String message)) {
+void IridiumController::setSBDCallback(void (*sbdCallback)(String message)) {
 	receivedSBDCallback = sbdCallback;
 }
 
