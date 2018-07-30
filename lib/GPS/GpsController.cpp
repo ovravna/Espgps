@@ -1,8 +1,8 @@
-#include "GpsContoller.h"
+#include "GpsController.h"
 
 
 
-bool GpsContoller::begin() {
+bool GpsController::begin() {
     
     GPS.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN); 
 
@@ -19,7 +19,7 @@ bool GpsContoller::begin() {
 }
 
 
-bool GpsContoller::handle() {
+bool GpsController::handle() {
     GPS.read();
     // if (c) Serial.print(c);
 

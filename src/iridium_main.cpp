@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <IridiumController.h>
-#include <GpsContoller.h>
+#include <GpsController.h>
 #include "utils.h"
 
 #include <Switch.h>
@@ -10,7 +10,7 @@ HardwareSerial iridiumSerial(1);
 HardwareSerial gpsSerial(2);
 
 
-GpsContoller gps(&gpsSerial, 25, 26);
+GpsController gps(&gpsSerial, 25, 26);
 IridiumController iridium(iridiumSerial, 32, 33, 35);
 Switch sunamiController;
 

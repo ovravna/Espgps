@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <IridiumController.h>
-#include <GpsContoller.h>
+#include <GpsController.h>
 #include "utils.h"
 #include <BleServer.h>
 
@@ -12,7 +12,7 @@ HardwareSerial gpsSerial(2);
 
 BleServer ble;
 
-GpsContoller gps(&gpsSerial, 25, 26);
+GpsController gps(&gpsSerial, 25, 26);
 IridiumController iridium(iridiumSerial, 32, 33, 35);
 Switch sunamiController;
 

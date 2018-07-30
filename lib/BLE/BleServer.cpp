@@ -27,9 +27,12 @@ void ConnectionCallback::onDisconnect(BLEServer *pServer) {
 
 void CharacteristicCallback::onRead(BLECharacteristic *pCharacteristic) {
 
+    Serial.println("Read");
+
 }
 
 void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic) {
+    Serial.println("Write");
 
 }
 
@@ -47,6 +50,8 @@ bool BleServer::begin() {
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new ConnectionCallback(this));
 
+    //BLEUUID aux("91bad492-b950-4226-aa2b-4ede9fa42f59");
+    
     pService = pServer->createService(BLEUUID(SERVICE_UUID));
 
     // characteristics[CHARACTERISTIC_UUID] = pService->createCharacteristic(
@@ -66,12 +71,12 @@ bool BleServer::begin() {
             BLECharacteristic::PROPERTY_NOTIFY
     );
 
-    // characteristics[POWER_CHAR_UUID]->addDescriptor(&textDescriptor);
+    characteristics[POWER_CHAR_UUID]->addDescriptor(&textDescriptor);
     characteristics[POWER_CHAR_UUID]->addDescriptor(new BLE2902());
     characteristics[POWER_CHAR_UUID]->setValue("OK");
 
     // characteristics[COORDINATES_CHAR_UUID] = pService->createCharacteristic(
-    //         COORDINATES_CHAR_UUID,k
+    //         COORDINATES_CHAR_UUID,
     //         BLECharacteristic::PROPERTY_READ
     // );
 

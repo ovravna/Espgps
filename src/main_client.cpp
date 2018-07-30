@@ -2,7 +2,7 @@
 
 #include <UUIDs.h>
 
-#if true
+#if false
 
 #include "utils.h"
 #include <BleClient.h>
@@ -152,21 +152,6 @@ void loop() {
     }
     doConnect = false;
   }
-
-  // If we are connected to a peer BLE Server, update the characteristic each time we are reached
-  // with the current time since boot.
-//   if (connected) {
-//     if (onoff) {
-//       Serial.println("Notifications turned on");
-//       pRemoteCharacteristic->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)notificationOn, 2, true);
-//     }
-//     // else     {
-//     //   Serial.println("Notifications turned off");
-//     //   pRemoteCharacteristic->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue((uint8_t*)notificationOff, 2, true);
-//     // }
-
-//     onoff = onoff ? 0 : 1;
-//   }
 
   delay(5000); // Delay a second between loops.
 } // End of loop

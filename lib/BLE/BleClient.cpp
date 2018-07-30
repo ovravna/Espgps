@@ -15,6 +15,10 @@ void AdvertisedCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
 
         }
         Serial.println();        
+        if (advertisedDevice.haveServiceUUID()) {
+            Serial.print("| UUID: " + String(advertisedDevice.getServiceUUID().toString().c_str()));
+
+        }
 
 
     }
@@ -88,13 +92,12 @@ bool BleClient::addCharacteristic(const char *uuid) {
 
     if (remoteChar->canNotify()) {
         remoteChar->registerForNotify(notifyCallback);
+
         remoteChar
             ->getDescriptor(BLEUUID((uint16_t)0x2902))
             ->writeValue((uint8_t*)notificationOn, 2, true);
 
     } 
-
-        
 
     return remoteChar != nullptr;
 }
@@ -111,15 +114,11 @@ void BleClient::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic
 
 
     //    Serial.write(pData, length);
-  
-    String s = String((char*) pData).substring(0, length);
-    Serial.println(s);
+
 
     
     if (DEBUG) {
-        Serial.print("Data: ");
-        Serial.print(s.substring(0, length));
-        Serial.println();
+        Serial.println("Data: " + String((char*) pData));
     }
 
 }
