@@ -20,9 +20,7 @@ public:
             GPSSerial(*hwSerial), 
             RX_PIN(rxPin),
             TX_PIN(txPin),
-            GPS(hwSerial) {
-
-    }
+            GPS(hwSerial) { }
 
 
     bool begin() override;

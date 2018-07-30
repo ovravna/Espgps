@@ -2,7 +2,7 @@
 
 #include <UUIDs.h>
 
-#if false
+#if true
 
 #include "utils.h"
 #include <BleClient.h>

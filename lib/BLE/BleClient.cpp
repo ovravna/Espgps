@@ -88,10 +88,13 @@ bool BleClient::addCharacteristic(const char *uuid) {
 
     if (remoteChar->canNotify()) {
         remoteChar->registerForNotify(notifyCallback);
+        remoteChar
+            ->getDescriptor(BLEUUID((uint16_t)0x2902))
+            ->writeValue((uint8_t*)notificationOn, 2, true);
 
     } 
 
-
+        
 
     return remoteChar != nullptr;
 }
@@ -108,7 +111,7 @@ void BleClient::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic
 
 
     //    Serial.write(pData, length);
-    Serial.println("KAKE!");
+  
     String s = String((char*) pData).substring(0, length);
     Serial.println(s);
 
@@ -128,6 +131,9 @@ void tryConnect(BleClient *client, BLEAddress *serverAddress) {
         client->addCharacteristic(POWER_CHAR_UUID);
         // client->addCharacteristic(CHARACTERISTIC_UUID);
         // client->addCharacteristic(CONNECTION_CHAR_UUID);
+
+   
+
     }
 }
 

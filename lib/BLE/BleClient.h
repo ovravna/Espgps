@@ -6,6 +6,11 @@
 #include <IDevice.h>
 
 class BleClient: public IDevice {
+    const uint8_t notificationOff[2] = {0x0, 0x0};
+    const uint8_t notificationOn[2] = {0x1, 0x0};
+    const uint8_t indicationOn[2] = {0x2, 0x0};
+
+
     std::map<String, BLERemoteCharacteristic *> characteristics{};
 
     const uint32_t SCAN_DURATION = 30;
