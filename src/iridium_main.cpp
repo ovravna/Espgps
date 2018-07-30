@@ -90,16 +90,6 @@ void setup() {
 
 }
 
-unsigned long t2;
-unsigned long t;
-unsigned long pdiff;
-
-void synchronize(unsigned long period = 1000) {
-
-	pdiff = (millis() - t);
-	if (pdiff < period) delay(period - pdiff);
-	t = millis();
-}
 
 void loop() {
     iridium.handle();

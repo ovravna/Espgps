@@ -18,6 +18,7 @@ Switch sunamiController;
 
 void terminal() {
     String s = readLine();
+    Serial.println(s);
     if (s == "GO") {
         Serial.println("Sending message!");
         iridium.sendSBDtext("NINJA!");
@@ -182,6 +183,7 @@ void setup() {
 
     //begin
     iridium.begin();
+
     gps.begin();
 
     delay(25);
@@ -189,16 +191,21 @@ void setup() {
 
 }
 
+int ti = 0;
 
 void loop() {
     iridium.handle();
     gps.handle();
 
-    ble.handle();
-
+    if (ti == 10) {
+        ble.handle();
+        ti = 0;
+    }
 
     if (DEBUG && Serial.available()) {    
         terminal(); //for testing
     }
+
 	synchronize(50);
+    ti++;
 }

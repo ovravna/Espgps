@@ -47,7 +47,7 @@ bool E_BLE_S::begin() {
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new ConnectionCallback(this));
 
-    pService = pServer->createService(SERVICE_UUID);
+    pService = pServer->createService(BLEUUID(SERVICE_UUID));
 
     // characteristics[CHARACTERISTIC_UUID] = pService->createCharacteristic(
     //         CHARACTERISTIC_UUID,
@@ -66,7 +66,7 @@ bool E_BLE_S::begin() {
             BLECharacteristic::PROPERTY_NOTIFY
     );
 
-    characteristics[POWER_CHAR_UUID]->addDescriptor(&textDescriptor);
+    // characteristics[POWER_CHAR_UUID]->addDescriptor(&textDescriptor);
     characteristics[POWER_CHAR_UUID]->addDescriptor(new BLE2902());
     characteristics[POWER_CHAR_UUID]->setValue("OK");
 
@@ -82,6 +82,7 @@ bool E_BLE_S::begin() {
     //         BLECharacteristic::PROPERTY_WRITE
     // );
 
+    pServer->getAdvertising()->addServiceUUID(BLEUUID(SERVICE_UUID));
 
     pService->start();
     pServer->getAdvertising()->start();
@@ -101,6 +102,7 @@ bool E_BLE_S::handle() {
     // }
 
     characteristics[POWER_CHAR_UUID]->notify();
+    
 
     return true;
 }

@@ -109,7 +109,7 @@ void E_BLE_C::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic,
 
     //    Serial.write(pData, length);
     Serial.println("KAKE!");
-    String s = String((char*) pData);
+    String s = String((char*) pData).substring(0, length);
     Serial.println(s);
 
     
