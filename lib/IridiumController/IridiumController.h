@@ -3,13 +3,14 @@
 
 #include <Arduino.h>
 #include <QueueList.h>
+#include <IDevice.h>
+#include <UUIDs.h>
 
 
 
 #define NUM "\\d"
 
-class IridiumController {
-    bool                debug = true; 
+class IridiumController: public IDevice {
 
     const unsigned int  BAUD_RATE = 19200;
 
@@ -81,9 +82,9 @@ public:
 
     }
 
-    void begin();
+    bool begin() override;
 
-    void handle();
+    bool handle() override;
 
     void test();
 
@@ -183,14 +184,14 @@ public:
         return Coordinate { lat, lng }.bytes;
     }
 
-    static void unbytify(char byteLatLng[8], int * latLng) {
+    static void unbytify(char byteLatLng[8], int * outLatLng) {
         Coordinate coor; 
         for (int i = 0; i < 8; i++) {
             coor.bytes[i] = byteLatLng[i];
 
         }
-        latLng[0] = coor.coordinates[0];
-        latLng[1] = coor.coordinates[1];
+        outLatLng[0] = coor.coordinates[0];
+        outLatLng[1] = coor.coordinates[1];
     }
 
 };

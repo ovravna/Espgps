@@ -4,8 +4,11 @@
 
 
 void ConnectionCallback::onConnect(BLEServer *pServer) {
-    Serial.print("Connected!! Clients connected: ");
-    Serial.println(pServer->getConnectedCount() + 1);
+    if (DEBUG) {
+        Serial.print("Connected!! Clients connected: ");
+        Serial.println(pServer->getConnectedCount() + 1);
+
+    }
 
     parent->bleConnected = true;
     pServer->getAdvertising()->start();
@@ -13,8 +16,10 @@ void ConnectionCallback::onConnect(BLEServer *pServer) {
 }
 
 void ConnectionCallback::onDisconnect(BLEServer *pServer) {
-    Serial.print("Disconnected! Clients connected: ");
-    Serial.println(pServer->getConnectedCount());
+    if (DEBUG) {
+        Serial.print("Disconnected! Clients connected: ");
+        Serial.println(pServer->getConnectedCount());
+    }
 
     parent->bleConnected = pServer->getConnectedCount() != 0;
 
@@ -77,7 +82,7 @@ bool E_BLE_S::begin() {
 
     pService->start();
     pServer->getAdvertising()->start();
-    Serial.println("Started advertising...");
+    if (DEBUG) Serial.println("Started advertising...");
 
     return true;
 

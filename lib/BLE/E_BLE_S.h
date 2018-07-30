@@ -4,6 +4,7 @@
 #include <BLEDevice.h>
 #include <Arduino.h>
 #include <IDevice.h>
+#include <UUIDs.h>
 
 class E_BLE_S: public IDevice {
     std::map<std::string, BLECharacteristic *> characteristics{};
@@ -32,7 +33,7 @@ class ConnectionCallback: public BLEServerCallbacks {
     E_BLE_S *parent;
 public:
     explicit ConnectionCallback(E_BLE_S *parent): parent(parent)  {
-        Serial.println("Connection callback created!");
+        if (DEBUG) Serial.println("Connection callback created!");
     }
 
     void onConnect(BLEServer *pServer) override;
@@ -47,6 +48,7 @@ public:
     void onRead(BLECharacteristic *pCharacteristic) override;
 
     void onWrite(BLECharacteristic *pCharacteristic) override;
+
 
 };
 

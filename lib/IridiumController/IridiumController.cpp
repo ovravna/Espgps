@@ -5,13 +5,13 @@ void IridiumController::test() {
 	Serial.println("TEST TEST TEST!");
 }
 
-void IridiumController::begin() {
+bool IridiumController::begin() {
     Iridium.begin(BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
 	
 	pinMode(RI_PIN, INPUT);
 
 	//Set auto retain; E1 = 9603 will always send back any valid command the user sends.
-	if (debug) {
+	if (DEBUG) {
 		pushCommand("ATE1", "OK");
 	} else {
 		pushCommand("ATE0", "OK");
@@ -26,10 +26,10 @@ void IridiumController::begin() {
 	pushCommand("AT+SBDREG?", "OK", [](IridiumController *crl){ 
 		
 		if (crl->status.REG == 2) {
-			Serial.println("Attached to network");
+			if (DEBUG) Serial.println("Attached to network");
 			return; //OK
 		}
-		Serial.println("Failed to attatch...");
+		if (DEBUG) Serial.println("Failed to attatch...");
 		//TODO: Attach manualty, may not be possible within the next 3 minutes, ref documentation.
 		// pushCommand("AT+SBDREG", "OK");
 
@@ -37,6 +37,7 @@ void IridiumController::begin() {
 
 	// Sets flow controll to None (should be default)
 	pushCommand("AT&K0", "OK"); 
+
 
 #if true
 	//Indicator Event Reporting, continually returns signal strength. Will probably use more power.
@@ -46,7 +47,7 @@ void IridiumController::begin() {
 #endif
 }
 
-void IridiumController::handle() {
+bool IridiumController::handle() {
 
 	// if (digitalRead(RI_PIN) == HIGH) {
 	// 	Serial.println("RINGING!");

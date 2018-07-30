@@ -26,21 +26,24 @@ bool E_BLE_C::connect(BLEAddress serverAddress) {
 
     }
 
-    Serial.println("Start connecting...");
+    if (DEBUG) Serial.println("Start connecting...");
 
     pClient->connect(serverAddress);
 
-    Serial.println("Client connected to server!");
+    if (DEBUG) Serial.println("Client connected to server!");
 
     pRemoteService = pClient->getService(SERVICE_UUID);
-    Serial.print("Client found service: ");
-    Serial.println(pRemoteService->toString().c_str());
+    if (DEBUG) {
+        Serial.print("Client found service: ");    
+        Serial.println(pRemoteService->toString().c_str());
+    } 
+
     if (pRemoteService == nullptr) {
         //TODO: something...
-        Serial.println("Not connected to service :(");
+        if (DEBUG) Serial.println("Not connected to service :(");
     } else {
 
-        Serial.println("Connected! :)");
+        if (DEBUG) Serial.println("Connected! :)");
     }
 
     doConnect = false;
@@ -53,14 +56,15 @@ bool E_BLE_C::addCharacteristic(const char *uuid) {
     BLERemoteCharacteristic * remoteChar = pRemoteService->getCharacteristic(uuid);
 
     if (remoteChar == nullptr) {
-        Serial.print("Could not find characteristic. UUID: ");
+        if (DEBUG) Serial.print("Could not find characteristic. UUID: ");
         return false;
     }
     characteristics[uuid] = remoteChar;
 
-
-    Serial.print("Found characteristic! UUID: ");
-    Serial.println(uuid);
+    if (DEBUG) {
+        Serial.print("Found characteristic! UUID: ");
+        Serial.println(uuid);
+    }
 
     if (remoteChar->canNotify()) {
         remoteChar->registerForNotify(notifyCallback);

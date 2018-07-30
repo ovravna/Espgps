@@ -3,6 +3,8 @@
 #ifndef ESP_UUIDS_H
 #define ESP_UUIDS_H
 
+#define DEBUG true
+
 #define SERVER_NAME "ESP32_SERVER"
 #define CLIENT_NAME "ESP32_CLIENT"
 

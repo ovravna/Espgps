@@ -1,5 +1,4 @@
 #include "Switch.h"
-#define TEST_LED 14
 
 
 bool Switch::getState() {

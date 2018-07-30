@@ -64,27 +64,30 @@ void receiveSBDcallback(String message) {
     
   }
 
-  Serial.println("SBD received: " + message);
+  if (DEBUG) Serial.println("SBD received: " + message);
 
 
 
 }
 
 void callback(String command, String response) {
-   Serial.println("Response is: " + response);
+  if (DEBUG) Serial.println("Response is: " + response);
 }
 
 void setup() {
 
-  pinMode(TEST_LED, OUTPUT);
-  digitalWrite(TEST_LED, HIGH);
+ 
 
 	// iridium.addCallcack(callback);
 
 	Serial.begin(19200);
-	Serial.println("Started!");
+	if (DEBUG) Serial.println("Started!");
+
+  //Set callbacks
   iridium.setResponseCallcack(callback);
   iridium.setSBDCallcack(receiveSBDcallback);
+
+  //begin
   iridium.begin();
   gps.begin();
 	// iridium.pushCommand("AT+CSQ", "OK");
