@@ -4,7 +4,7 @@
 #include <IDevice.h>
 
 
-class E_GPS : public IDevice {
+class GpsContoller : public IDevice {
     HardwareSerial      GPSSerial;
     int                 RX_PIN;
     int                 TX_PIN;
@@ -16,7 +16,7 @@ class E_GPS : public IDevice {
 public:
     Adafruit_GPS        GPS;
 
-    explicit E_GPS(HardwareSerial *hwSerial, int rxPin, int txPin) : 
+    explicit GpsContoller(HardwareSerial *hwSerial, int rxPin, int txPin) : 
             GPSSerial(*hwSerial), 
             RX_PIN(rxPin),
             TX_PIN(txPin),

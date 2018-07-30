@@ -1,4 +1,4 @@
-#include "E_BLE_S.h"
+#include "BleServer.h"
 #include <UUIDs.h>
 #include <BLE2902.h>
 
@@ -33,14 +33,14 @@ void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic) {
 
 }
 
-bool E_BLE_S::setCharacteristic(std::string uuid, std::string value) {
+bool BleServer::setCharacteristic(std::string uuid, std::string value) {
 
     characteristics[uuid]->setValue(value);
 
     return true;
 }
 
-bool E_BLE_S::begin() {
+bool BleServer::begin() {
 
     BLEDevice::init(SERVER_NAME);
 
@@ -92,7 +92,7 @@ bool E_BLE_S::begin() {
 
 }
 
-bool E_BLE_S::handle() {
+bool BleServer::handle() {
 
     // if (digitalRead(18)) {
     //     characteristics[POWER_CHAR_UUID]->setValue("ERR");

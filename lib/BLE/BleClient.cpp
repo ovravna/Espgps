@@ -1,4 +1,4 @@
-#include "E_BLE_C.h"
+#include "BleClient.h"
 #include <UUIDs.h>
 #include <Log.h>
 
@@ -32,7 +32,7 @@ void AdvertisedCallback::onResult(BLEAdvertisedDevice advertisedDevice) {
 
 }
 
-bool E_BLE_C::connect(BLEAddress serverAddress) {
+bool BleClient::connect(BLEAddress serverAddress) {
 
     if (pClient->isConnected()) {
         pClient->disconnect();
@@ -67,7 +67,7 @@ bool E_BLE_C::connect(BLEAddress serverAddress) {
 }
 
 
-bool E_BLE_C::addCharacteristic(const char *uuid) {
+bool BleClient::addCharacteristic(const char *uuid) {
     if (DEBUG) Serial.println("Try to connect to characteritic");
     BLERemoteCharacteristic * remoteChar = pRemoteService->getCharacteristic(uuid);
 
@@ -96,9 +96,9 @@ bool E_BLE_C::addCharacteristic(const char *uuid) {
     return remoteChar != nullptr;
 }
 
-bool E_BLE_C::validConnection = false;
+bool BleClient::validConnection = false;
 
-void E_BLE_C::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic,
+void BleClient::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic,
                                 uint8_t *pData, size_t length, bool isNotify) {
 
     // char d[length];
@@ -121,7 +121,7 @@ void E_BLE_C::notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic,
 
 }
 
-void tryConnect(E_BLE_C *client, BLEAddress *serverAddress) {
+void tryConnect(BleClient *client, BLEAddress *serverAddress) {
 
     if (client->connect(*serverAddress)) {
 
@@ -132,7 +132,7 @@ void tryConnect(E_BLE_C *client, BLEAddress *serverAddress) {
 }
 
 
-void E_BLE_C::init() {
+void BleClient::init() {
 
     BLEClient *client = BLEDevice::createClient();
 
@@ -143,10 +143,10 @@ void E_BLE_C::init() {
 }
 
 
-bool E_BLE_C::begin() {
+bool BleClient::begin() {
 
     BLEDevice::init(CLIENT_NAME);
-    E_BLE_C::init();
+    BleClient::init();
 
     BLEScan *pBLEScan = BLEDevice::getScan();
 
@@ -160,7 +160,7 @@ bool E_BLE_C::begin() {
 }
 
 
-bool E_BLE_C::handle() {
+bool BleClient::handle() {
     if (doConnect) {
         tryConnect(this, serverAddress);
     }

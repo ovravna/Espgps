@@ -6,7 +6,7 @@
 #include <IDevice.h>
 #include <UUIDs.h>
 
-class E_BLE_S: public IDevice {
+class BleServer: public IDevice {
     std::map<std::string, BLECharacteristic *> characteristics{};
     BLEService *pService = nullptr;
     BLEServer *pServer = nullptr;
@@ -30,9 +30,9 @@ public:
 };
 
 class ConnectionCallback: public BLEServerCallbacks {
-    E_BLE_S *parent;
+    BleServer *parent;
 public:
-    explicit ConnectionCallback(E_BLE_S *parent): parent(parent)  {
+    explicit ConnectionCallback(BleServer *parent): parent(parent)  {
         if (DEBUG) Serial.println("Connection callback created!");
     }
 

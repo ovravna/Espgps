@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include <E_GPS.h>
-#include <E_BLE_C.h>
-#include <E_BLE_S.h>
+#include <GpsContoller.h>
+#include <BleClient.h>
+#include <BleServer.h>
 #include <IridiumController.h>
 #include <Print.h>
 #include <UUIDs.h>
@@ -9,9 +9,9 @@
 #include <Switch.h>
 
 #ifdef SERVER
-E_BLE_S ble;
+BleServer ble;
 #else 
-E_BLE_C ble;
+BleClient ble;
 #endif
 
 
@@ -30,7 +30,7 @@ Switch sunamiController;
 #ifdef GPS_DEVICE
 HardwareSerial gpsSerial(2);
 
-E_GPS gps(&gpsSerial, 25, 26);
+GpsContoller gps(&gpsSerial, 25, 26);
 #endif
 
 

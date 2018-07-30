@@ -5,9 +5,9 @@
 #if false
 
 #include "utils.h"
-#include <E_BLE_C.h>
+#include <BleClient.h>
 
-E_BLE_C ble;
+BleClient ble;
 void setup() {
   Serial.begin(19200);
   ble.begin();

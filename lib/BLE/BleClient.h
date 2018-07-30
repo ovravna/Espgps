@@ -5,7 +5,7 @@
 #include <BLEDevice.h>
 #include <IDevice.h>
 
-class E_BLE_C: public IDevice {
+class BleClient: public IDevice {
     std::map<String, BLERemoteCharacteristic *> characteristics{};
 
     const uint32_t SCAN_DURATION = 30;
@@ -32,7 +32,7 @@ class E_BLE_C: public IDevice {
 
     bool addCharacteristic(const char *uuid);
 
-    friend void tryConnect(E_BLE_C *client, BLEAddress *serverAddress);
+    friend void tryConnect(BleClient *client, BLEAddress *serverAddress);
 
     friend class AdvertisedCallback; 
     
@@ -46,11 +46,11 @@ public:
 
 
  class AdvertisedCallback: public BLEAdvertisedDeviceCallbacks {
-    E_BLE_C *parent;
+    BleClient *parent;
 
 
 public:
-    explicit AdvertisedCallback(E_BLE_C *parent): parent(parent) {
+    explicit AdvertisedCallback(BleClient *parent): parent(parent) {
     };
 
     void onResult(BLEAdvertisedDevice advertisedDevice) override;
