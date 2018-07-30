@@ -3,7 +3,10 @@
 #include <E_GPS.h>
 #include "utils.h"
 
+
 #define TEST_LED 14
+#include <Switch.h>
+
 
 HardwareSerial iridiumSerial(1);
 HardwareSerial gpsSerial(2);
@@ -11,7 +14,7 @@ HardwareSerial gpsSerial(2);
 
 E_GPS gps(&gpsSerial, 25, 26);
 IridiumController iridium(iridiumSerial, 32, 33, 35);
-
+Switch sunamiController;
 
 void receiveSBDcallback(String message) {
 
@@ -20,8 +23,10 @@ void receiveSBDcallback(String message) {
   if (message.startsWith("s0")) {
     //turn off led
     //sendSBDtext( state of led now )
-    digitalWrite(TEST_LED, LOW);
-    iridium.sendSBDtext(String(digitalRead(TEST_LED)));
+    bool state = sunamiController.turnOff();
+
+    
+    iridium.sendSBDtext(String(state));
   }
 
   //state 1
@@ -30,14 +35,14 @@ void receiveSBDcallback(String message) {
     //sendSBDtext( state of led now )
 
 
-    digitalWrite(TEST_LED, HIGH);
-    iridium.sendSBDtext(String(digitalRead(TEST_LED)));
+    bool state = sunamiController.turnOff();
+    iridium.sendSBDtext(String(state));
   }
 
   //Query state
   if (message.startsWith("qs")) {
     //sendSBDtext( state of led now )    
-    iridium.sendSBDtext(String(digitalRead(TEST_LED)));
+    iridium.sendSBDtext(String(sunamiController.getState()));
 
   }
 
@@ -48,13 +53,14 @@ void receiveSBDcallback(String message) {
           + String(gps.GPS.longitudeDegrees, 4) 
           + String(gps.GPS.lon); 
 
-          iridium.sendSBDtext(s);
+    iridium.sendSBDtext(s);
   }
 
   //Query coordinates
   if (message.startsWith("qc")) {
-    Coordinate coor = Coordinate { gps.GPS.latitude_fixed, gps.GPS.longitude_fixed };
-    iridium.sendSBDtext(coor.b);
+
+    char* s = IridiumController::bytify(gps.GPS.latitude_fixed, gps.GPS.longitude_fixed);
+    iridium.sendSBDtext(s);
     
   }
 

@@ -47,6 +47,16 @@ class IridiumController {
     bool setCommandState(bool active, String command = "", String endResponse = "");
     bool command(String message, String response);
 
+    /*
+    `Coordinates` is used for simple lossless compression of a GPS coordinate for packaging in SBD write. 
+    It turns two int32s into an 8 bytes. 
+    */
+    union Coordinate {
+        int coordinates[2];
+        char bytes[sizeof(int) * 2];
+    };
+
+    
 
     struct {
         String command;
@@ -84,7 +94,8 @@ public:
 
     bool pushCommand(String message, String response);
     bool pushCommand(String message, String response, void (*respCallback)(IridiumController *crl));
-    
+  
+
     struct {
 
         int MO_status; 
@@ -167,7 +178,25 @@ public:
 
     static int eventParser(String sbdi, int out[]);
 
+      
+    static char* bytify(int lat, int lng) {
+        return Coordinate { lat, lng }.bytes;
+    }
+
+    static void unbytify(char byteLatLng[8], int * latLng) {
+        Coordinate coor; 
+        for (int i = 0; i < 8; i++) {
+            coor.bytes[i] = byteLatLng[i];
+
+        }
+        latLng[0] = coor.coordinates[0];
+        latLng[1] = coor.coordinates[1];
+    }
+
 };
+
+
+
 
 
 #endif
