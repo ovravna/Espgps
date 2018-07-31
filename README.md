@@ -7,22 +7,20 @@ PlatformIO uses normal `.cpp`  files instead of `.ino` files native to the Ardui
 
 ## Structure
 In `src` you will mainly find entry point files identifiable as `main_*.cpp`.
-> Note: Only one entry_point file can be compiled at a time, therefore be sure to use `src_filters` in `platformio.ini` to exclude all non-relevant main files.
+> **Note:** Only one entry_point file can be compiled at a time, therefore be sure to use `src_filters` in `platformio.ini` to exclude all non-relevant main files.
 
 In `lib` you will find both project code and third-party libraries. The project code is identifiable by only having `.h` and `.cpp` files in each folder and by being separated into folders based on concern.  
 
 ## Install, build and upload 
 Start by installing PlatformIO. You can install only a CLI, but the simplest approach is to install the VSCode based IDE, read more [here][3]. 
 
-Now [clone][1] the project from https://github.com/ovravna/Espgps.git and test that it builds with `ctrl`+`alt`+`b`. 
+Now [clone][1] the project from   https://github.com/ovravna/Espgps.git and test that it builds with `ctrl`+`alt`+`b`. 
 
 All went well if compilation ends with [<span style="color:green">**SUCCESS**</span>].
 
 ### Upload
 By default PlatformIO will try to upload to any compatible device connected with USB serial. Because of different builds with different entry points this is not practical in this project. Build parameters and port selection is specified in the `platformio.ini` file. 
-Select a serial port for each build by changing the `upload_port` parameter in both the `env:esp32client` and `env:esp32server` environments. 
-
-Read more [here][4].
+Select a serial port for each build by changing the `upload_port` parameter in both the `env:esp32client` and `env:esp32server` environments. Read more [here][4].
 
 Now you should have a fully running enviorment running and uploading to the ESP32.
 ## Connect peripheries
@@ -39,7 +37,19 @@ GIO14 | SIGNAL LED
 
 > ESP32 pinout can be found [here][esp32breakout].
 > RockBLOCK 9603 pinout [here][9603breakout].
+## Satellitt communication
+For now communication happens by e-mail with following:
+- Send to `data (ÆT) sbd-iridium.com`
+- Set mail subject to IMEI number of the chip (written on the chip itself).
+- Attaching a text file named `<something>.sbd` with a command will do the following.
 
+Command | Action 
+---|---
+s0 | Turn off Controller, returns state
+s1 | Turn on Controller, returns state
+qs | Returns state
+ql | Returns location e.g. "59.7201N, 10.3721E"
+qc | Returns 8 byte compressed GPS coordinates
 
 ## Other notes
 ### Antennas
