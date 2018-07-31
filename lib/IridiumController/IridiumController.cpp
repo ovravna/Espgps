@@ -88,8 +88,6 @@ bool IridiumController::isActive() {
 bool IridiumController::setCommandState(bool active, String command, String endResponse) {
 	commandActive = active;
 
-	//Serial.println("Active: " + String(commandActive));
-
 	if (active) {
 		activeCommand = command;
 		activeEndResponse = endResponse;
@@ -196,57 +194,6 @@ int IridiumController::handleInterupt() {
 	return 0;
 }
 
-int IridiumController::handleR() {
-	// 0 = Success, 1 = Not finished, 2 = Error
-
-	String packet = readPacket();
-	if (packet.length() == 0) return 1; 
-
-	//Checks for status commands / events
-	if (packet.startsWith("+SBDIX")) {
-		int st[6];
-		int n = eventParser(packet, st);
-		status.update(st);
-	} 
-	else if (packet.startsWith("+CSQ")) {
-		int st[1];
-		int n = eventParser(packet, st);
-		status.SignalQuality = st[0];
-	} 
-	else if (packet.startsWith("+SBDREG")) {
-		int st[2];
-		int n = eventParser(packet, st);
-		status.REG = st[0];
-	}
-	
-	//Callback on pushCommand
-	if (callbck.command == activeCommand) {
-		if (isEndResponse(packet)) {
-			callbck.responseCallback(this);
-			callbck.clear();
-		}
-	}
-	
-	//Callback on received data
-	if (activeCommand.startsWith("AT+SBDRT")) {
-		if (!packet.startsWith("AT+SBDRT") && !packet.startsWith("+SBDRT:") && !packet.startsWith("OK")) {
-			receivedSBDCallback(packet);
-		}
-	}
-
-	//Generall response callback
-	responseCallback(activeCommand, packet);
-	
-	//Checks for and of activity
-	if (isEndResponse(packet)) {
-		setCommandState(false);
-		if (packet.startsWith("ERROR")) return 2;
-		return 0;
-	}
-
-	return 1;
-
-}
 
 
 int IridiumController::handleSend() {
