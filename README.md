@@ -44,7 +44,8 @@ GIO14 | SIGNAL LED
 ## Other notes
 ### Antennas
 When developing a working antenna is essential, both the GPS and the Iridium chip should have its own external antenna designed for its bandwidth and it should be placed in line-of-sight to the satellites e.i. outdoors. 
-
+### BLE
+The code supports BLE (Bluetooth Low Energy), however a stable connection between devices while controlling the peripheries proved to be a difficult task. Thus it need more development before being stable enough for usage.
 
 [1]:https://code.visualstudio.com/docs/editor/versioncontrol#_cloning-a-repository
 [2]:http://docs.platformio.org/en/latest/frameworks/arduino.html#platforms
