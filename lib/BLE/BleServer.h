@@ -4,7 +4,7 @@
 #include <BLEDevice.h>
 #include <Arduino.h>
 #include <IDevice.h>
-#include <UUIDs.h>
+#include <Project.h>
 
 class BleServer: public IDevice {
     std::map<std::string, BLECharacteristic *> characteristics{};
