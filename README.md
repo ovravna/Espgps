@@ -1,4 +1,5 @@
 
+
 ## Intro
 This project is designed to compile on an ESP32.
 
@@ -63,6 +64,10 @@ ql | Returns location e.g. "59.7201N, 10.3721E"
 qc | Returns 8 byte compressed GPS coordinates
 
 ## Other notes
+### Partitions
+Read more [here][partition].
+
+
 ### Antennas
 When developing a working antenna is essential, both the GPS and the Iridium chip should have its own external antenna designed for its bandwidth and it should be placed in line-of-sight to the satellites e.i. outdoors. 
 ### BLE
@@ -75,3 +80,4 @@ The code supports BLE (Bluetooth Low Energy), however a stable connection betwee
 [5]:https://www.iridium.com/products/iridium-9603-3/
 [esp32breakout]:https://cdn.instructables.com/FKZ/5Y5T/JFIIR5XE/FKZ5Y5TJFIIR5XE.LARGE.jpg
 [9603breakout]:https://docs.rockblock.rock7.com/docs/connectors
+[partition]:http://docs.platformio.org/en/latest/platforms/espressif32.html#partition-tables
