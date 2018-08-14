@@ -27,12 +27,12 @@ void ConnectionCallback::onDisconnect(BLEServer *pServer) {
 
 void CharacteristicCallback::onRead(BLECharacteristic *pCharacteristic) {
 
-    Serial.println("Read");
+    if (DEBUG) Serial.println("Read BLE");
 
 }
 
 void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic) {
-    Serial.println("Write");
+    if (DEBUG) Serial.println("Write BLE");
 
 }
 

@@ -14,7 +14,7 @@ BleServer ble;
 
 GpsController gps(&gpsSerial, 25, 26);
 IridiumController iridium(iridiumSerial, 32, 33, 35);
-Switch sunamiController;
+Switch sunamiController(Serial, 3, 1);
 
 void terminal() {
     String s = readLine();

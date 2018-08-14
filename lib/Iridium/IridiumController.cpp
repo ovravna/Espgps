@@ -61,7 +61,7 @@ bool IridiumController::handle() {
 		int n = handleResponse();
 		if (n == 2) // ERROR
 		{
-			Serial.println("#errorhandling...");
+			if (DEBUG) Serial.println("#errorhandling...");
 			//TODO error handeling. It may be an idea to clear the sendQueue, however that may/will cause later commands/sessions to be deleted (NOT GOOD). Maybe its possible to design a session-state and only clear this session? 
 			// However, I'm not actually sure it is needed at all, it seems like the 9603 is ignoring commands that are not valid.
 

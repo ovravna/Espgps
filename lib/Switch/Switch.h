@@ -8,10 +8,13 @@
 
 class Switch {
     bool state = false;
+    HardwareSerial serial; 
+    int                 RX_PIN;
+    int                 TX_PIN;
 
 public:
 
-    Switch() {
+    Switch(HardwareSerial hwSerial, int rxPin, int txPin): serial(hwSerial), RX_PIN(rxPin), TX_PIN(txPin) {
         pinMode(TEST_LED, OUTPUT);
         digitalWrite(TEST_LED, HIGH);
     }
