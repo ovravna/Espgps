@@ -1,3 +1,4 @@
+
 ## Intro
 This project is designed to compile on an ESP32.
 
@@ -23,9 +24,19 @@ By default PlatformIO will try to upload to any compatible device connected with
 Select a serial port for each build by changing the `upload_port` parameter in both the `env:esp32client` and `env:esp32server` environments. Read more [here][4].
 
 Now you should have a fully running enviorment running and uploading to the ESP32.
+
+### Read serial and debug
+By connecting to the ESP32 by serial you will be able to read debug messages from the device. Read with baudrate **19200** (19200/8N1). 
+In the file `lib/Project/Project.h` you will fine a line 
+```cpp
+#define DEBUG <true|false>
+```
+Make sure this line is set to `true` to see debug messages and `false` otherwise. 
+
+
 ## Connect peripheries
 The project relies on a [Iridium 9603 transceiver][5] and a GPS-module. Connection must be as follows:
-
+ 
 Pin | Wire
 ---|---
 GIO32 | 9603 RXD
