@@ -107,6 +107,19 @@ void terminal() {
         Serial.println("REG: "+String(iridium.status.REG));
     }
 
+    if (s.startsWith("SS")) {
+        Serial.println(sunamiController.getState());
+    }
+
+     if (s == "S+") {
+        sunamiController.turnOn();
+    }
+
+    if (s == "S-") {
+        sunamiController.turnOff();
+
+    }
+
     if (s.startsWith(":")) {
         int i = s.indexOf(";");
         if (i != -1)
@@ -137,7 +150,7 @@ void receiveSBDcallback(String message) {
     //sendSBDtext( state of led now )
 
 
-    bool state = sunamiController.turnOff();
+    bool state = sunamiController.turnOn();
     iridium.sendSBDtext(String(state));
   }
 

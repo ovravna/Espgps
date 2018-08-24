@@ -12,18 +12,20 @@ bool Switch::toggle() {
 bool Switch::turnOff() {
 
     digitalWrite(TEST_LED, LOW);
-    state = digitalRead(TEST_LED);
 
     serial.write("smsc$0%%$0%%");
+
+    state = false;
 
     return state;
 }
 
 bool Switch::turnOn() {
     digitalWrite(TEST_LED, HIGH);
-    state = digitalRead(TEST_LED);
 
     serial.write("smsc$1%%$1%%");
+    state = true;
+
     return state;
 }
 
